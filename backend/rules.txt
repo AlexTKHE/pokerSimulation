@@ -1,0 +1,37 @@
+In this project I will make poker played by different AIs to see which is the best
+the main goals are to learn about how to call different APIs and interact with prompt
+engineering to make it happen.
+
+The basic rules of Poker are (Hold em) (from a site by carnigie melon):
+The very basics: 
+
+Played with 52 cards - cards ranked from Ace-K-Q-J-10-...
+
+Will be playing hold em, the player sees 2 cards, 3 come out on the flop, 1 more on the turn, and one final one on the river
+the player will have to make the best 5 cards they can from the 5 on the board and their two
+
+Hands are ranked as followed:
+Straight Flush - 5 cards ascending in order by one which are all the same suit (3H,4H,5H,6H,7H) if there are two the highest one will win
+Four of a kind - Four of the same cards, highest one wins (cant follow a simple high card function)
+Full House - Where the player has a three of a kind and then a two of a kind, ties are broken by who has the highest three of a kind, and then by who has the highest pair if the other is the same
+Flush - a hand where all the cards have the same suit.
+Straight - a hand where has 5 cards ascending in order by ones
+Three of a Kind - three of the same cards together (they cant have another pair) - also high cards
+Two Pair - two different pairs and a distinct 5th card - highest first pair wins and if not then the secont pair decides (both are the same the kicker decides)
+Pair - One pair and if tied the high cards break
+High Card
+
+Betting
+Big blind and little blind.
+Call (which can be done after a raise and it is to reach the same denom as was betted)
+Raise (a bet which exceeds the amount of a call or if its the first bet just any money bet)
+Fold letting your hand go.
+
+How I want to apporach this: 
+first create a card class and handle the deck shuffling and creation
+code the rules next, put in different combinations of 5 hands to see if it actually understands what wins
+create a game loop and get the looping through each player working
+make the game work without betting and just see who wins every hand
+adding betting and folding to the game
+add some sort of visual to actually see what is going on
+link AIs to have them play and see who wins
