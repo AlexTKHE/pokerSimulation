@@ -13,6 +13,7 @@ class Card():
     def getSuit(self):
         return self.suit 
 
+
 class Hand():
     def __init__ (self, id, card_1, card_2):
         self.id = id
