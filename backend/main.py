@@ -16,11 +16,52 @@ table_cards = list()
 
 #methods - the plan is to call them going down each other so I dont have to worry about the ones below like I know its not trips so i dont have to code that in
 
+def straight_flush(player, table_cards):
+    #sort the cards in descending order
+    cards = player.getCards()
+    cards.extend(table_cards)
+   
+    cards.sort(key=lambda x: x.getValue(), reverse = True)
+   
+    #find the highest card of the straight while going through
+    highest_card = -1
+    straight_flush_count = 0
+    prev_suit =  cards[0].getSuit()
+    prev_value = cards[0].getValue() + 1
+    for card in cards:
+        if (prev_value-card.getValue()) == 1 and prev_suit == card.getSuit():
+            if (straight_flush_count == 1):
+                highest_card = prev_value
+            straight_flush_count += 1
+        else:
+            straight_flush_count = 1
+        if card == 2 and cards[0].getValue() == 14 and straight_flush_count==4 and prev_suit == cards[0].getSuit():
+            return [player.getId(), highest_card]
+        elif (straight_flush_count == 5):
+            return [player.getId(), highest_card] 
+        prev_value = card.getValue()
+        prev_suit = card.getSuit()
+    return False
+    
+
+def four_of_a_kind(player, table_cards):
+    cards = player.getCards()
+    cards.extend(table_cards)
+    for card in cards:
+        pair_found = 0
+        for reference in cards:
+            if reference.getValue() == card.getValue() and reference.getId() != card.getId() and pair_found == 2:
+                return [player.getId(), card.getValue()]
+            
+            elif reference.getValue() == card.getValue() and reference.getId() != card.getId():
+                pair_found += 1
+    return False
+
+
 def full_house(player, table_cards):
     trip_card = three_of_a_kind(player, table_cards)
 
     if trip_card != False:
-        print("working")
         cards = player.getCards()
         cards.extend(table_cards)
         other_cards = []
@@ -84,8 +125,9 @@ def straight(player, table_cards):
     card_values = []
     for card in cards:
         card_values.append(card.getValue())
-    card_values.sort(reverse=True)
     print (card_values)
+    card_values.sort(reverse=True)
+ 
     #find the highest card of the straight while going through
     highest_card = -1
     straight_count = 0
@@ -145,11 +187,9 @@ def two_pair_for_method(cards):
     
     for card in cards:
         for reference in cards:
-            print(card.getId())
-            print(reference.getId())
             if card.getValue() == reference.getValue() and card.getId() != reference.getId():
                # return (player.getId(), card.getValue())
-               is_pair == True
+               is_pair = True
                if card.getValue() > highest_pair:
                    highest_pair = card.getValue()
             
@@ -213,11 +253,10 @@ for suit in suits:
 #with shuffled 
 
 #make table cards
-table_cards = [cards[0],cards[13],cards[1], cards[5], cards[18]]
+table_cards = [cards[0],cards[13],cards[1], cards[5], cards[2]]
 
 #pick two random cards for hands (make two hands)
-#players = [Hand(1,cards[0],cards[1]), Hand(2,cards[51],cards[34]), Hand(3, cards[18], cards[15])]
-players = [Hand(1,cards[26],cards[14])]
+players = [Hand(1,cards[3],cards[4]), Hand(2,cards[51],cards[34]), Hand(3, cards[16], cards[17])]
 
 find_high_card = []
 hand_high_card = []
@@ -231,14 +270,20 @@ for player in players:
     pairs = two_pair(player, table_cards)
     #finding trips
     trips = three_of_a_kind(player, table_cards)
-    print(trips)
     #finding straights
     straights = straight(player, table_cards)
     #finding flushes
     flushes = flush(player, table_cards)
     #finding full houses
     full_houses = full_house(player, table_cards)
-    print(full_houses)
+    #finding four of a kind
+    four_of_a_kinds = four_of_a_kind(player, table_cards)
+    #finding straight flushes
+    straight_flushes = straight_flush(player, table_cards)
+    print(straight_flushes)
+
+    
+
 
     
 
