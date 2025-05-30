@@ -127,7 +127,6 @@ def straight(player, table_cards):
         card_values.append(card.getValue())
     print (card_values)
     card_values.sort(reverse=True)
-
  
     #find the highest card of the straight while going through
     highest_card = -1
@@ -235,25 +234,41 @@ def two_pair_for_method(cards):
         return [player.getId(), highest_pair]
     else:
         return False
-
-
-#will be passed through one card and hand id, this will be the highest card in the hand that is not used in others the kickcer
-def high_card(player, table_cards):
-    return_value = 0
+    
+#to determine the highest card in the hand of someone, can also enter
+def high_card_in_hand(player, table_cards):
+    highest_value = -1
     cards = player.getCards()
     cards.extend(table_cards)
-    cards.sort(key=lambda x: x.getValue(), reverse = True)
-    card_values = []
     for card in cards:
-        card_values.append(card.getValue())
-    print (card_values)
-    cards = cards[:5]
-    count = 1
-    for card in cards:
-        count = count * 100
-        print(count)
-        return_value += card.getValue()/count
-    return [player.getId(), return_value]
+        if card.getValue() > highest_value:
+            highest_value = card.getValue()
+
+    return highest_value
+
+#will be passed through one card and hand id, this will be the highest card in the hand that is not used in others the kickcer
+def high_card(hands_highest_card):
+    high_card = -1
+    high_index = -1
+    tie_index = [0]
+
+    for hand in hands_highest_card:
+        id = hand[0]
+        value = hand[1]
+
+        if (value > high_card):
+            high_card = value
+            tie_index.clear()
+            high_index = id
+        elif (value == high_card):
+           
+            tie_index.append(id)
+    
+    if(len(tie_index) > 0):
+        tie_index.append(high_index)
+        return tie_index
+    else: 
+        return high_index
 
 
 
@@ -278,6 +293,170 @@ table_cards = [cards[0],cards[13],cards[1], cards[17], cards[2]]
 
 #pick two random cards for hands (make two hands)
 players = [Hand(1,cards[3],cards[4]), Hand(2,cards[51],cards[34]), Hand(3, cards[14], cards[17])]
-    
+
+find_high_card = []
+hand_high_card = []
+
+#at the end of a turn (ending where betting is over) there needs to be a check for every hand to see who won
+straight_flush_found = False
+four_of_a_kind_found = False
+full_house_found = False
+flush_found = False
+straight_found = False
+trips_found = False
+two_two_pairs_found = False
+two_pair_found = False
+
+#define an array to hold all the hands that fall into the categories
+straight_flush_array = []
+four_of_a_kind_array = []
+full_house_array = []
+flush_array = []
+straight_array = []
+trips_array = []
+two_two_pairs_array = []
+two_pair_array = []
+high_card_array = []
+
 for player in players:
-    print(high_card(player,table_cards))
+    #go down in rankings and if theres a winner just break the for loop
+   #finding straight flushes
+    straight_flushes = straight_flush(player, table_cards) 
+    if straight_flushes != False:
+        straight_flush_found = True
+        straight_flush_array.extend(straight_flushes)
+    if straight_flush_found == True:
+        continue
+
+    #finding four of a kind
+    four_of_a_kinds = four_of_a_kind(player, table_cards)
+    if four_of_a_kinds != False:
+        four_of_a_kind_found = True
+        four_of_a_kind_array.extend(four_of_a_kinds)
+    if four_of_a_kind_found == True:
+        continue
+
+    #finding full houses
+    full_houses = full_house(player, table_cards)
+    if full_houses != False:
+        full_house_found = True
+        full_house_array.extend(full_houses)
+    if full_house_found == True:
+        continue
+
+    #finding flushes
+    flushes = flush(player, table_cards)
+    print(flush_array)
+    if flushes != False:
+        flush_found = True
+        flush_array.extend(flushes)
+    if flush_found == True:
+        continue
+
+    #finding straights
+    straights = straight(player, table_cards)
+    if straights != False:
+        straight_found = True
+        straight_array.extend(straights)
+    if straight_found == True:
+        continue
+    #finding trips
+    trips = three_of_a_kind(player, table_cards)
+    if trips != False:
+        trips_found = True
+        trips_array.extend(trips)
+    if trips_found == True:
+        continue
+
+    #finding two pairs
+    two_pairs = two_two_pairs(player, table_cards)
+    if two_pairs != False:
+        two_two_pairs_found = True
+        two_two_pairs_array.extend(two_pairs)
+    if two_two_pairs_found == True:
+        continue
+
+    #finding pairs
+    pairs = two_pair(player, table_cards)
+    if pairs != False:
+        two_pair_found = True
+        two_pair_array.extend(pairs)
+    if two_pair_found == True:
+        continue
+    #finding high card
+    high_card_array.extend([player.getId(), high_card_in_hand(player, table_cards)])
+   
+
+if straight_flush_found:
+    if len(straight_flush_array) > 1:
+        highest_value = -1
+        winner = []
+        for straightFlush in straight_flush_array:
+            if straightFlush.getValue() > highest_value:
+                winner.clear()
+                highest_value = straightFlush.getValue()
+                winner.append(straightFlush.getId())
+            elif straightFlush[1] == highest_value:
+                winner.append(straightFlush.getId())
+            else:
+                pass
+    else:
+        for straightFlush in straight_flush_array:
+            winner = straightFlush.getId()
+elif four_of_a_kind_found:
+    if len(four_of_a_kind_array) > 1:
+        highest_value = -1
+        winner = []
+        for fourOfAKind in four_of_a_kind_array:
+            if fourOfAKind.getValue() > highest_value:
+                winner.clear()
+                highest_value = fourOfAKind.getValue()
+                winner.append(fourOfAKind.getId())
+            elif fourOfAKind.getValue() == highest_value:
+                winner.append(fourOfAKind.getId())
+            else:
+                pass
+    else:
+        for fourOfAKind in four_of_a_kind_array:
+            winner = fourOfAKind.getId()
+elif full_house_found:
+    if len(full_house_array) > 1:
+        highest_value = -1
+        winner = []
+        for fullHouse in full_house_array:
+            if fullHouse.getValue() > highest_value:
+                winner.clear()
+                highest_value = fullHouse.getValue()
+                winner.append(fullHouse.getId())
+            elif fullHouse[1] == highest_value:
+                winner.append(fullHouse.getId())
+            else:
+                pass
+    else:
+        for fullHouse in full_house_array:
+            winner = fullHouse.getId()
+
+elif flush_found:
+    if len(flush_array) > 1:
+        highest_value = -1
+        winner = []
+        for flushes in flush_array:
+            print(flushes)
+            if flushes > highest_value:
+                winner.clear()
+                highest_value = flushes.getValue()
+                winner.append(flushes.getId())
+            elif flushes.getValue() == highest_value:
+                winner.append(flushes.getId())
+            else:
+                pass
+    else:
+        for flushes in flush_array:
+            winner = flushes.getId()
+    
+straight_found = False
+trips_found = False
+two_two_pairs_found = False
+two_pair_found = False
+    
+
